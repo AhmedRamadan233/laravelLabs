@@ -4,14 +4,7 @@
 
 @section('content')
 
-@if (session('alert-message'))
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        {{ session('alert-message') }}
-        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-@endif
+
 
 
 
@@ -39,11 +32,13 @@
                 <td>
                     <a href="{{ route('posts.show', ['post' => $post['id']]) }}" class="btn btn-info">View</a>
                     <a href="#" class="btn btn-primary">Edit</a>
-                    <form style="display: inline;" method="post" action="{{route('posts.destroy' , ['post' => $post['id']])}}">
+                    <form style="display: inline;" method="post" action="{{route('posts.destroy' , ['post' => $post['id']])}}" id="delete-form">
                         @csrf
                         @method('DELETE')
-                        <button class="btn btn-danger" type="submit" >delete</button>
+                        <button class="btn btn-danger" type="submit" onclick="confirmDelete()">Delete</button>
                     </form>
+
+
 
 
                 </td>
@@ -54,6 +49,13 @@
 
         </tbody>
     </table>
+    <script>
+    function confirmDelete() {
+        if (confirm("Are you sure you want to delete this post?")) {
+            document.getElementById('delete-form').submit();
+        }
+    }
+    </script>
 
 @endsection
 
