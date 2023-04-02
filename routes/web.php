@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PostController;
-
+use App\Http\Controllers\CommentController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -32,3 +32,4 @@ Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show')
 Route::DELETE('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
 
+Route::resource('comments', CommentController::class)->only('store');
