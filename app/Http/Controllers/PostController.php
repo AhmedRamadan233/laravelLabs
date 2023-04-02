@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
+
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -10,31 +12,33 @@ class PostController extends Controller
 
     public function index()
     {
-        $posts = Post::all();
-
+        $posts = Post::paginate(15);
         return view('posts.index', ['posts' => $posts]);
     }
 
     public function create()
     {
-        return view('posts.create');
+        $users = User::all();
+
+        return view('posts.create', [
+            'users' => $users
+        ]);
     }
+
 
 
     public function store(Request $request)
     {
-        $input = $request->all();
+        $data = $request->all();
 
-        $validatedData = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'required',
+        Post::create([
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'user_id' => $data['post_creator'],
+
         ]);
 
-        $post = new Post;
-        $post->title = $validatedData['title'];
-        $post->description = $validatedData['description'];
-        $post->save();
-        return redirect('/posts');
+        return to_route('posts.index');
     }
 
 
@@ -45,6 +49,37 @@ class PostController extends Controller
         $post = Post::findOrFail($id);
         return view('posts.show', ['post' => $post]);
     }
+
+
+    public function edit(Post $post)
+    {
+        $users = User::all();
+        return view('posts.edit', [
+            'post' => $post,
+            'users' => $users
+        ]);
+    }
+
+    // PostController method for updating a post
+    public function update(Request $request, Post $post)
+    {
+        $data = $request->all();
+
+        $post->title = $data['title'];
+        $post->description = $data['description'];
+        $post->user_id = $data['post_creator'];
+        $post->save();
+
+        return redirect()->route('posts.index');
+    }
+
+
+
+
+
+
+
+
     public function destroy($id)
     {
         $post = Post::find($id);
